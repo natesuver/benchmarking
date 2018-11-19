@@ -3,7 +3,7 @@ Script to perform simple floating point and integer benchmarking in python
 @author: Nate Suver and Kam Larkins
 '''
 import threading
-import time
+import timeit
 import csv
 import sys
 
@@ -18,22 +18,27 @@ class execution:
     def toArray(self):
         return [self.runNumber,self.computations,self.threadNum]
 
-class benchInteger(threading.Thread):
+class bench(threading.Thread):
     executions=[]
     def __init__(self, threadId):
         threading.Thread.__init__(self)
         self.threadId=threadId
     def run(self):
         #here we will run some nice code to compute things
-        print("Start benchmarking")
-        start=time.time()
-        end=time.time()
-        return execution(0,0,1)
+        print("Start benchmarking thread " + self.threadId)
+        elapsed=timeit.timeit(self.calcInt)
+        return execution(100000,elapsed,self.threadId)
+
+    def calcInt(self):
+        r=0
+        for i in range(100000):
+            r=r+1
+
 
 threads=[]
 
 for i in range(int(sys.argv[2])):
-    thr=benchInteger(i)
+    thr=bench(i)
     threads.append(thr)
     thr.start()
 

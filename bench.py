@@ -43,6 +43,30 @@ def writeResultToCsv(filename,threads):
             for item in thread.executions:
                 writer.writerow(item.toArray())
 
+def getFile():
+    filename = input("Enter the file you wish to save results: ")
+    return filename
+
+def getThreads():
+    while True:
+        try:
+            threads = int(input("Enter the number of threads: "))
+            return int(threads)
+        except ValueError:
+            print("Error! Not a number!")
+        else:
+            break
+
+def getInt():
+    while True:
+        try:
+            ints = int(input("Enter the number of ints: "))
+            return int(ints)
+        except ValueError:
+            print("Error! Not a number!")
+        else:
+            break
+
 #Start our benchmarks.  Arg 1 is the name of the file to write results to.  Arg2 are the number of threads to run.  Arg3 is the # of iterations per run
 def main(filename, threadsToRun, executionsPerRun):
 
@@ -55,4 +79,8 @@ def main(filename, threadsToRun, executionsPerRun):
         thread.join()
     writeResultToCsv(filename,threads)
 
-main("./results.csv",int(3),int(1000000))
+filename = getFile()
+threads = getThreads()
+ints = getInt()
+
+main(filename,threads,ints)

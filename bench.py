@@ -20,36 +20,39 @@ class execution:
 
 class bench(threading.Thread):
     executions=[]
-    def __init__(self, threadId):
+    def __init__(self, threadId, executionsPerRun):
         threading.Thread.__init__(self)
         self.threadId=threadId
+        self.executionsPerRun=executionsPerRun
     def run(self):
         #here we will run some nice code to compute things
-        print("Start benchmarking thread " + self.threadId)
-        elapsed=timeit.timeit(self.calcInt)
-        return execution(100000,elapsed,self.threadId)
+        print("Start benchmarking thread " + str(self.threadId))
+        for runNumber in range(25): #for each test, we will run 25 passes.
+            codeToExec='''
+i=0
+i=i+1'''
+            computationTime=timeit.timeit(stmt=codeToExec,number=self.executionsPerRun)
+            compsPerSecond=self.executionsPerRun/computationTime #divide to get computations per second
+            self.executions.append(execution(compsPerSecond,runNumber,self.threadId))
 
-    def calcInt(self):
-        r=0
-        for i in range(100000):
-            r=r+1
-
-
-threads=[]
-
-for i in range(int(sys.argv[2])):
-    thr=bench(i)
-    threads.append(thr)
-    thr.start()
-
-def writeResultToCsv(argv):
-    with open(argv[1], mode='w') as resultFile:
+#write the results to a csv file we can import into excel
+def writeResultToCsv(filename,threads):
+    with open(filename, mode='w',newline='') as resultFile:
         writer = csv.writer(resultFile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         for thread in threads:
-            for execution in thread.executions:
-                writer.writerow(execution)
+            for item in thread.executions:
+                writer.writerow(item.toArray())
 
-for thread in threads:
-    thread.join()
+#Start our benchmarks.  Arg 1 is the name of the file to write results to.  Arg2 are the number of threads to run.  Arg3 is the # of iterations per run
+def main(filename, threadsToRun, executionsPerRun):
 
-writeResultToCsv(sys.argv)
+    threads=[]
+    for i in range(threadsToRun):
+        thr=bench(i,executionsPerRun)
+        threads.append(thr)
+        thr.start()
+    for thread in threads:
+        thread.join()
+    writeResultToCsv(filename,threads)
+
+main("./results.csv",int(3),int(1000000))

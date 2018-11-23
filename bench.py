@@ -8,6 +8,8 @@ import csv
 import sys
 import time
 
+SECONDSPERMINUTE = 60 #This should be set to 60, but can be lowered for troubleshooting
+
 class Execution:
     minutes=0
     ops=0
@@ -18,7 +20,7 @@ class Execution:
         self.minutes=minutes
         self.threadcount=threadcount
     def toArray(self):
-        return [self.minutes,self.ops,self.threadcount, self.passCount]
+        return [self.minutes,self.ops,self.threadcount, self.passCount, str(datetime.datetime.now())]
 
 class Benchmark:
     beginTest = False #a flag we can use to tell all of the threads that we should begin testing
@@ -30,6 +32,10 @@ class Benchmark:
         self.threadsToRun = threadsToRun
         self.useFloat = useFloat
 
+    def print(self,message):
+        print(message)
+        sys.stdout.flush()
+
     def count(self, threadid):
         threadLock=threading.Lock()
         startTime = datetime.datetime.now()
@@ -38,50 +44,54 @@ class Benchmark:
         else:
             increment=1
         while not self.beginTest: #we use this first loop to help minimize the overhead of the threads starting.  All threads will be stuck in this same loop, until the timer thread sets a global to break this loop, and they should all start at just about the same time.
-            print("Waiting on thread " + str(threadid) + " for test to begin")
-        print("Test on thread " + str(threadid) + " has started!")
+            self.print("Waiting on thread " + str(threadid) + " for test to begin")
+        self.print("Test is starting on thread " + str(threadid))
         while not self.endTest:
-            threadLock.acquire()
+            threadLock.acquire() #lock the resource during assignment to avoid contention.
             self.opCounter+=increment
             threadLock.release()
         endTime = datetime.datetime.now()
-        print("Test complete on thread " + str(threadid) + ", ran for " + str(endTime-startTime) + " seconds" )
+        self.print("Test complete on thread " + str(threadid) + ", ran for " + str(endTime-startTime) + " seconds" )
 
-    def beginCounting(self,minutesToSleep):
+    def beginCounting(self):
         self.beginTest = True
-        time.sleep(minutesToSleep*60)
+        time.sleep(self.minuteCount*SECONDSPERMINUTE)
+        self.print("Signaling that test should end")
         self.endTest=True
 
     #begin the test.
     def start(self):
-        global opCounter
-        self.reset(self.useFloat)
+        self.reset()
         threads=[]
-        for i in range(self.threadsToRun):
-            thr=threading.Thread(target=self.count, args=[i]) #TestRun()
+       
+        for i in range(self.threadsToRun): #create threadsToRun number of threads, and start them.  The threads will start but the counting doesn't begin yet
+            thr=threading.Thread(target=self.count, args=[i])
             threads.append(thr)
-            print("Start benchmarking on thread " + str(i) + " for " + str(self.minuteCount) + " minutes")
+            self.print("Start benchmarking on thread " + str(i) + " for " + str(self.minuteCount) + " minutes")
             thr.start()
             
-        timerthread=threading.Thread(target=self.beginCounting,args=[self.minuteCount])
+        timerthread=threading.Thread(target=self.beginCounting)
         timerthread.start()
         for thread in threads:
             thread.join()
-        result=round(self.opCounter/(self.minuteCount*60)) #compute number of computations per second
-        print("Test run for " + str(self.minuteCount) + " minutes is complete, with a value of " + str(result) + " operations per second")
+        result=round(self.opCounter/(self.minuteCount*SECONDSPERMINUTE)) #compute number of computations per second
+        self.print("Test run for " + str(self.minuteCount) + " minutes is complete, with a value of " + str(result) + " operations per second")
         result = Execution(self.minuteCount,result,self.threadsToRun)
         return result
 
     #reset our class variables to prepare for the next test
-    def reset(self,useFloat):
-        if (useFloat==True):
+    def reset(self):
+        if (self.useFloat==True):
             self.opCounter=0.0
         else:
             self.opCounter=0
         self.beginTest=False
         self.endTest=False
 
-#Start our benchmarks.  Arg 1 is the name of the file to write results to.  Arg2 are the number of threads to run.  Arg3 is the # of iterations per run.  Each iteration will run one minute longer than the last.
+#Start our benchmarks.  
+#Arg 1 is the name of the file to write results to.  
+#Arg2 is the # of iterations per run.  Each iteration will run one minute longer than the last.
+#Arg3 specifies if the program should count floats or ints
 def main(filename, iterations, useFloat):
     executions=[]
     for passCount in [1,2,3]: #each test needs to be run 3 times
@@ -97,12 +107,10 @@ def main(filename, iterations, useFloat):
 
 #write the results to a csv file we can import into excel
 def writeResultToCsv(filename,executions):
-    with open(filename, mode='w',newline='') as resultFile:
+    with open(filename, mode='a+',newline='') as resultFile:
         writer = csv.writer(resultFile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         for item in executions:
             writer.writerow(item.toArray())
-
-
 
 def getFile():
     filename = input("Enter the file you wish to save results to: ")
@@ -128,4 +136,4 @@ def getRunNumber():
     else:
         pass
 
-main('./results.csv',getRunNumber(),getCountingType())
+main(getFile(),getRunNumber(),getCountingType())

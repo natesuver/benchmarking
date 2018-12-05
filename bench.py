@@ -47,9 +47,9 @@ class Benchmark:
             self.print("Waiting on thread " + str(threadid) + " for test to begin")
         self.print("Test is starting on thread " + str(threadid))
         while not self.endTest:
-            threadLock.acquire() #lock the resource during assignment to avoid contention.
+           # threadLock.acquire() #lock the resource during assignment to avoid contention.
             self.opCounter+=increment
-            threadLock.release()
+           # threadLock.release()
         endTime = datetime.datetime.now()
         self.print("Test complete on thread " + str(threadid) + ", ran for " + str(endTime-startTime) + " seconds" )
 
@@ -75,6 +75,7 @@ class Benchmark:
         for thread in threads:
             thread.join()
         result=round(self.opCounter/(self.minuteCount*SECONDSPERMINUTE)) #compute number of computations per second
+        self.print("Operations: " + str(self.opCounter))
         self.print("Test run for " + str(self.minuteCount) + " minutes is complete, with a value of " + str(result) + " operations per second")
         result = Execution(self.minuteCount,result,self.threadsToRun)
         return result
@@ -94,8 +95,8 @@ class Benchmark:
 #Arg3 specifies if the program should count floats or ints
 def main(filename, iterations, useFloat):
     executions=[]
-    for passCount in [1,2,3]: #each test needs to be run 3 times
-        for threadsToRun in [1,2,4,8]: #each test needs to be repeated with either 1,2,4,8 threads
+    for passCount in [1]: #[1,2,3]: #each test needs to be run 3 times
+        for threadsToRun in [1]: #[1,2,4,8]: #each test needs to be repeated with either 1,2,4,8 threads
             minuteCount=1
             while minuteCount<=iterations:
                 bench = Benchmark(minuteCount,threadsToRun,useFloat)

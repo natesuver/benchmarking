@@ -1,0 +1,13 @@
+.Nate.
+Kameryn's
+(this is the ( way to oz)),
+I Expect--double hyphens, but not single-hyphens
+--Double hyphens do not count at the start of a word if no alpha precedes it
+Double hyphens do not count at the end of a word if no alpha follows it --
+$$ hello world!  FDSA*&FD&S*
+'I should not see quotes here'
+But I've sure seen them here.
+'''''
+I can't believe this is happening''and no quote shall I see
+I should not see a hyphen -here either
+or here- as well

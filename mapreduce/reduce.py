@@ -18,6 +18,10 @@ for line in sys.stdin:
     except:
         word2count[word] = count
     # write the tuples to stdout
-    # Note: they are unsorted
-for word in word2count.keys():
-    print('%s\t%s'%(word, word2count[word]))
+
+#Print list sorted by word count from lowest to highest
+for w in sorted(word2count, key=word2count.get):
+    print('%s\t%s'%(w, word2count[w]))
+
+#for word in word2count.keys():
+#   print('%s\t%s'%(word, word2count[word]))

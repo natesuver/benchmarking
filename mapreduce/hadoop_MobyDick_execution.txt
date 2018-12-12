@@ -1,0 +1,92 @@
+[hadoop@master mapreduce]$ mapred streaming -input /user/hadoop/wordcount-input/moby-dick.txt -output /user/hadoop/wordcount-output -mapper map.py -reducer reduce.py -file map.py -file reduce.py
+2018-12-11 20:19:37,086 WARN streaming.StreamJob: -file option is deprecated, please use generic option -files instead.
+2018-12-11 20:19:37,335 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+packageJobJar: [map.py, reduce.py] [/home/hadoop/hadoop/share/hadoop/tools/lib/hadoop-streaming-3.1.1.jar] /tmp/streamjob5300530858821798658.jar tmpDir=null
+2018-12-11 20:19:39,156 INFO client.RMProxy: Connecting to ResourceManager at master/192.168.56.106:8032
+2018-12-11 20:19:39,529 INFO client.RMProxy: Connecting to ResourceManager at master/192.168.56.106:8032
+2018-12-11 20:19:39,728 ERROR streaming.StreamJob: Error Launching job : Output directory hdfs://master:9000/user/hadoop/wordcount-output already exists
+Streaming Command Failed!
+[hadoop@master mapreduce]$ mapred streaming -input /user/hadoop/wordcount-input/moby-dick.txt -output /user/hadoop/wordcount-output/moby_dick -mapper map.py -reducer reduce.py -file map.py -file reduce.py
+2018-12-11 20:20:08,214 WARN streaming.StreamJob: -file option is deprecated, please use generic option -files instead.
+2018-12-11 20:20:08,452 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+packageJobJar: [map.py, reduce.py] [/home/hadoop/hadoop/share/hadoop/tools/lib/hadoop-streaming-3.1.1.jar] /tmp/streamjob7436162065520313613.jar tmpDir=null
+2018-12-11 20:20:10,315 INFO client.RMProxy: Connecting to ResourceManager at master/192.168.56.106:8032
+2018-12-11 20:20:10,678 INFO client.RMProxy: Connecting to ResourceManager at master/192.168.56.106:8032
+2018-12-11 20:20:11,052 INFO mapreduce.JobResourceUploader: Disabling Erasure Coding for path: /tmp/hadoop-yarn/staging/hadoop/.staging/job_1544572331334_0002
+2018-12-11 20:20:11,757 INFO mapred.FileInputFormat: Total input files to process : 1
+2018-12-11 20:20:12,332 INFO mapreduce.JobSubmitter: number of splits:2
+2018-12-11 20:20:12,424 INFO Configuration.deprecation: yarn.resourcemanager.system-metrics-publisher.enabled is deprecated. Instead, use yarn.system-metrics-publisher.enabled
+2018-12-11 20:20:12,766 INFO mapreduce.JobSubmitter: Submitting tokens for job: job_1544572331334_0002
+2018-12-11 20:20:12,768 INFO mapreduce.JobSubmitter: Executing with tokens: []
+2018-12-11 20:20:13,149 INFO conf.Configuration: resource-types.xml not found
+2018-12-11 20:20:13,150 INFO resource.ResourceUtils: Unable to find 'resource-types.xml'.
+2018-12-11 20:20:13,276 INFO impl.YarnClientImpl: Submitted application application_1544572331334_0002
+2018-12-11 20:20:13,337 INFO mapreduce.Job: The url to track the job: http://master:8088/proxy/application_1544572331334_0002/
+2018-12-11 20:20:13,338 INFO mapreduce.Job: Running job: job_1544572331334_0002
+2018-12-11 20:20:23,666 INFO mapreduce.Job: Job job_1544572331334_0002 running in uber mode : false
+2018-12-11 20:20:23,671 INFO mapreduce.Job:  map 0% reduce 0%
+2018-12-11 20:20:50,020 INFO mapreduce.Job:  map 67% reduce 0%
+2018-12-11 20:20:52,056 INFO mapreduce.Job:  map 100% reduce 0%
+2018-12-11 20:21:02,194 INFO mapreduce.Job:  map 100% reduce 100%
+2018-12-11 20:21:04,274 INFO mapreduce.Job: Job job_1544572331334_0002 completed successfully
+2018-12-11 20:21:04,452 INFO mapreduce.Job: Counters: 53
+        File System Counters
+                FILE: Number of bytes read=1989459
+                FILE: Number of bytes written=4632422
+                FILE: Number of read operations=0
+                FILE: Number of large read operations=0
+                FILE: Number of write operations=0
+                HDFS: Number of bytes read=1203211
+                HDFS: Number of bytes written=216295
+                HDFS: Number of read operations=11
+                HDFS: Number of large read operations=0
+                HDFS: Number of write operations=2
+        Job Counters
+                Launched map tasks=2
+                Launched reduce tasks=1
+                Data-local map tasks=2
+                Total time spent by all maps in occupied slots (ms)=101162
+                Total time spent by all reduces in occupied slots (ms)=16612
+                Total time spent by all map tasks (ms)=50581
+                Total time spent by all reduce tasks (ms)=8306
+                Total vcore-milliseconds taken by all map tasks=50581
+                Total vcore-milliseconds taken by all reduce tasks=8306
+                Total megabyte-milliseconds taken by all map tasks=12948736
+                Total megabyte-milliseconds taken by all reduce tasks=2126336
+        Map-Reduce Framework
+                Map input records=5701
+                Map output records=209538
+                Map output bytes=1570377
+                Map output materialized bytes=1989465
+                Input split bytes=224
+                Combine input records=0
+                Combine output records=0
+                Reduce input groups=19870
+                Reduce shuffle bytes=1989465
+                Reduce input records=209538
+                Reduce output records=19870
+                Spilled Records=419076
+                Shuffled Maps =2
+                Failed Shuffles=0
+                Merged Map outputs=2
+                GC time elapsed (ms)=951
+                CPU time spent (ms)=10240
+                Physical memory (bytes) snapshot=570884096
+                Virtual memory (bytes) snapshot=5710782464
+                Total committed heap usage (bytes)=259571712
+                Peak Map Physical memory (bytes)=232464384
+                Peak Map Virtual memory (bytes)=1922756608
+                Peak Reduce Physical memory (bytes)=110542848
+                Peak Reduce Virtual memory (bytes)=1906507776
+        Shuffle Errors
+                BAD_ID=0
+                CONNECTION=0
+                IO_ERROR=0
+                WRONG_LENGTH=0
+                WRONG_MAP=0
+                WRONG_REDUCE=0
+        File Input Format Counters
+                Bytes Read=1202987
+        File Output Format Counters
+                Bytes Written=216295
+2018-12-11 20:21:04,452 INFO streaming.StreamJob: Output directory: /user/hadoop/wordcount-output/moby_dick
